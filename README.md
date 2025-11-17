@@ -574,7 +574,66 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
 
 ---
 
-### 🔧 Enhancement #1: Make Transcript Always Visible (Optional)
+### 🔧 Change #4: Fix Mobile Microphone Permission Flow (Critical for Mobile)
+
+**File**: [`components/embed-popup/agent-client.tsx`](./components/embed-popup/agent-client.tsx)
+
+**Problem**: On mobile devices, the agent starts talking before the user grants microphone permission, causing audio to be muted.
+
+**Solution**: Request microphone permission BEFORE connecting to the room.
+
+```typescript
+// BEFORE (causes mobile issues - around line 82-101)
+const connect = async () => {
+  Promise.all([
+    room.localParticipant.setMicrophoneEnabled(true, ...),
+    room.connect(...)
+  ]).catch(...);
+};
+
+// AFTER (fixed mobile flow)
+const connect = async () => {
+  try {
+    // Step 1: Request microphone permission first (shows prompt to user)
+    await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // Step 2: After permission granted, connect to the room
+    const connectionDetails = await existingOrRefreshConnectionDetails();
+    await room.connect(connectionDetails.serverUrl, connectionDetails.participantToken);
+
+    // Step 3: Now enable and publish the microphone track
+    await room.localParticipant.setMicrophoneEnabled(true, undefined, {
+      preConnectBuffer: appConfig.isPreConnectBufferEnabled,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error connecting to agent:', error);
+      setError({
+        title: 'There was an error connecting to the agent',
+        description: `${error.name}: ${error.message}`,
+      });
+    }
+  }
+};
+```
+
+**Why This Works**:
+1. `getUserMedia()` shows the browser's microphone permission prompt
+2. User grants permission (promise resolves)
+3. Room connects AFTER permission is granted
+4. Agent only joins after user is ready
+5. Microphone track publishes successfully
+
+**Benefits**:
+- ✅ Fixes mobile microphone issues
+- ✅ Agent waits for user permission before joining
+- ✅ No muted audio on mobile
+- ✅ Works on first try without refreshes
+- ✅ Desktop continues to work normally
+
+---
+
+### 🔧 Enhancement #1: Make Transcript Always Visible (Optional - Reverted in This Project)
 
 **File**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
 
@@ -644,10 +703,12 @@ When setting up a new agent with this frontend template:
   - [ ] `components/embed-popup/agent-client.tsx`
   - [ ] `components/embed-popup/error-message.tsx`
   - [ ] `components/embed-popup/trigger.tsx`
-- [ ] **Step 4** (Optional): Make transcript always visible in `popup-view.tsx`
-- [ ] **Step 5**: Build and test: `pnpm build`
-- [ ] **Step 6**: Deploy to Vercel
-- [ ] **Step 7**: Test embedding on external website
+- [ ] **Step 4**: Fix mobile microphone permission flow in `agent-client.tsx` ⚠️ **Critical for mobile**
+- [ ] **Step 5** (Optional): Make transcript always visible in `popup-view.tsx`
+- [ ] **Step 6**: Build and test: `pnpm build`
+- [ ] **Step 7**: Deploy to Vercel
+- [ ] **Step 8**: Test on mobile device to verify mic permission flow
+- [ ] **Step 9**: Test embedding on external website
 
 ---
 
@@ -708,22 +769,35 @@ When setting up a new agent with this frontend template:
   - **How It Works**: The `data-lk-sandbox-id` attribute contains the Vercel deployment subdomain (e.g., `https://restorant-demo-frontend`), which is appended with `.vercel.app` to construct full URLs like `https://restorant-demo-frontend.vercel.app/lk-logo.svg`
   - **Result**: Logos now load correctly from Vercel regardless of embedding domain
 
-**Enhancement #1: Always-Visible Transcript**
-- ✨ **ADDED**: Transcript now always visible during conversation
-  - **Feature**: Real-time text display of agent and user speech
-  - **Before**: Transcript only visible when chat button toggled
-  - **After**: Transcript always visible, updating in real-time as agent speaks
-  - **File Changed**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
-  - **Changes Made**:
-    - Set transcript opacity to always be 1 (fully visible)
-    - Removed dependency on `chatOpen` state for transcript visibility
-    - Added `pointer-events-none` class to prevent blocking UI interactions
-    - Chat input toggle still controls text message sending
+**Fix #4: Mobile Microphone Permission Issues**
+- 🐛 **FIXED**: Agent no longer starts talking before user grants microphone permission on mobile
+  - **Issue**: On mobile devices, agent would start talking before user granted mic permission, causing muted audio and requiring multiple refreshes
+  - **Symptoms**:
+    - Agent starts talking immediately on widget open (mobile only)
+    - User mic stays muted even after granting permission
+    - Audio doesn't work until multiple page refreshes
+  - **Root Cause**: Room connection and mic enablement happening simultaneously, allowing agent to join before permission granted
+  - **Solution**: Sequential connection flow that requests permission first
+  - **File Changed**: [`components/embed-popup/agent-client.tsx`](./components/embed-popup/agent-client.tsx)
+  - **Connection Flow**:
+    1. Request microphone permission via `getUserMedia()` (shows prompt to user)
+    2. Wait for user to grant permission
+    3. Connect to room (agent joins after permission)
+    4. Enable and publish microphone track
   - **Benefits**:
-    - Better accessibility for hearing-impaired users
-    - Easier to review conversation history
-    - No need to toggle chat button to see text
-  - **Result**: Users can now see the full conversation transcript automatically as the agent talks
+    - User sees permission prompt immediately when opening widget
+    - Agent waits until permission granted before joining room
+    - No premature talking from agent
+    - Microphone works correctly on first try (mobile)
+    - Desktop functionality unaffected
+  - **Result**: Smooth mobile experience with proper permission handling
+
+**Enhancement #1: Transcript Toggle (Reverted from Always-Visible)**
+- ✨ **CHANGED**: Transcript only shows when chat button is toggled
+  - **Reason**: Keeps mobile UI clean and uncluttered
+  - **Behavior**: Users can click chat button to view conversation transcript
+  - **File Changed**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
+  - **Result**: Cleaner mobile interface with transcript accessible on demand
 
 ---
 
