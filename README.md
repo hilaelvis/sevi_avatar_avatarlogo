@@ -259,6 +259,41 @@ agents.cli.run_app(
 - **Telephony (Twilio)**: `sip-*` or `call-*` or rooms containing `twilio`
 - The agent detects connection type based on room name pattern
 
+## 🔗 Embedding the Widget
+
+### Popup Embed
+
+Add this script tag to any website to embed the restaurant agent as a popup:
+
+```html
+<script
+  src="https://restorant-demo-frontend.vercel.app/embed-popup.js"
+  data-lk-sandbox-id="https://restorant-demo-frontend"
+></script>
+```
+
+**Features:**
+- ✅ Floating button that opens voice agent popup
+- ✅ Works on any website (CORS enabled)
+- ✅ No additional configuration needed
+- ✅ Responsive and mobile-friendly
+
+### Iframe Embed
+
+Alternatively, embed directly as an iframe:
+
+```html
+<iframe
+  src="https://restorant-demo-frontend.vercel.app/embed"
+  width="100%"
+  height="600"
+  frameborder="0"
+  allow="microphone"
+></iframe>
+```
+
+**Note:** Make sure to allow microphone access with the `allow="microphone"` attribute.
+
 ## 🐛 Troubleshooting
 
 ### Agent Not Connecting
@@ -314,12 +349,23 @@ agents.cli.run_app(
 - **Tech Stack**: Next.js 15.4.7, React 19, Tailwind CSS 4, LiveKit SDK
 
 #### 🔍 Bug Fixes
+
+**Fix #1: Agent Connection Issue**
 - 🐛 **FIXED**: Added missing `agentName: 'restorant_agent'` to `app-config.ts`
   - **Issue**: Frontend wasn't requesting the correct agent from LiveKit
   - **Symptom**: "Agent did not join the room" error on frontend
   - **Root Cause**: `APP_CONFIG_DEFAULTS` was missing the `agentName` field
   - **Solution**: Added `agentName: 'restorant_agent'` to match backend agent name
   - **File Changed**: [`app-config.ts`](./app-config.ts)
+
+**Fix #2: CORS Error on Embedded Widget**
+- 🐛 **FIXED**: Added CORS headers to allow embedding on external websites
+  - **Issue**: Embed popup script failed when embedded on external domains
+  - **Symptom**: `CORS policy: No 'Access-Control-Allow-Origin' header` error
+  - **Root Cause**: API endpoint missing CORS headers for cross-origin requests
+  - **Solution**: Added CORS headers and OPTIONS handler to `/api/connection-details`
+  - **File Changed**: [`app/api/connection-details/route.ts`](./app/api/connection-details/route.ts)
+  - **Now Supports**: Embedding on any website with `<script>` tag
 
 ---
 
