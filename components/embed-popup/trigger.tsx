@@ -82,7 +82,7 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
                   className="bg-bg1 size-5"
                   // webpack build throws if I use custom tailwind classes to achive this
                   style={{
-                    maskImage: 'url(https://restorant-demo-frontend.vercel.app/lk-logo.svg)',
+                    maskImage: 'url(/lk-logo.svg)',
                     maskSize: 'contain',
                   }}
                 />
