@@ -81,11 +81,15 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
 
     const connect = async () => {
       try {
-        // First, connect to the room
+        // First, request microphone permission (but don't publish yet)
+        // This shows the permission prompt to the user on mobile
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // After permission granted, connect to the room
         const connectionDetails = await existingOrRefreshConnectionDetails();
         await room.connect(connectionDetails.serverUrl, connectionDetails.participantToken);
 
-        // After room is connected, enable microphone
+        // Now enable and publish the microphone track
         await room.localParticipant.setMicrophoneEnabled(true, undefined, {
           preConnectBuffer: appConfig.isPreConnectBufferEnabled,
         });
