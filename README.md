@@ -361,10 +361,13 @@ Alternatively, embed directly as an iframe:
 **Fix #2: CORS Error on Embedded Widget**
 - 🐛 **FIXED**: Added CORS headers to allow embedding on external websites
   - **Issue**: Embed popup script failed when embedded on external domains
-  - **Symptom**: `CORS policy: No 'Access-Control-Allow-Origin' header` error
+  - **Symptoms**:
+    - `CORS policy: No 'Access-Control-Allow-Origin' header` error
+    - `Request header field x-sandbox-id is not allowed` error
   - **Root Cause**: API endpoint missing CORS headers for cross-origin requests
-  - **Solution**: Added CORS headers and OPTIONS handler to `/api/connection-details`
+  - **Solution**: Added CORS headers including `x-sandbox-id` and OPTIONS handler
   - **File Changed**: [`app/api/connection-details/route.ts`](./app/api/connection-details/route.ts)
+  - **Headers Added**: `Access-Control-Allow-Origin`, `Access-Control-Allow-Headers` (including `x-sandbox-id`)
   - **Now Supports**: Embedding on any website with `<script>` tag
 
 ---
