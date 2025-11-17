@@ -370,11 +370,19 @@ Alternatively, embed directly as an iframe:
   - **Headers Added**: `Access-Control-Allow-Origin`, `Access-Control-Allow-Headers` (including `x-sandbox-id`)
   - **Now Supports**: Embedding on any website with `<script>` tag
 
-#### ⚠️ Known Cosmetic Issues (Non-Breaking)
-- Logo images (lk-logo.svg) may show 404 errors when embedded on external sites
-  - **Impact**: None - widget functionality is not affected
-  - **Cause**: Logos use relative paths which resolve to embedding domain
-  - **Workaround**: Logos are decorative only; missing logos don't prevent agent from working
+**Fix #3: Logo 404 Errors on Embedded Widget**
+- 🐛 **FIXED**: Logos now load from Vercel deployment instead of embedding domain
+  - **Issue**: Logo SVG files returned 404 errors when widget embedded on external sites
+  - **Symptom**: `GET https://sevitech.org/lk-logo.svg 404 (Not Found)`
+  - **Root Cause**: Relative paths like `/lk-logo.svg` resolved to embedding domain (sevitech.org) instead of Vercel deployment
+  - **Solution**: Dynamically construct logo URLs using the `data-lk-sandbox-id` attribute (Vercel base URL)
+  - **Files Changed**:
+    - [`components/embed-popup/standalone-bundle-root.tsx`](./components/embed-popup/standalone-bundle-root.tsx) - Pass sandboxId to app config
+    - [`components/embed-popup/agent-client.tsx`](./components/embed-popup/agent-client.tsx) - Forward baseUrl prop
+    - [`components/embed-popup/error-message.tsx`](./components/embed-popup/error-message.tsx) - Use dynamic logo URLs
+    - [`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx) - Use dynamic logo URLs
+  - **How It Works**: The `data-lk-sandbox-id` attribute contains the Vercel deployment URL, which is passed down through components to construct full logo URLs like `https://restorant-demo-frontend.vercel.app/lk-logo.svg`
+  - **Result**: Logos now load correctly from Vercel regardless of embedding domain
 
 ---
 
