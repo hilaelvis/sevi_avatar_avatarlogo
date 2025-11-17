@@ -189,6 +189,36 @@ export const APP_CONFIG_DEFAULTS = {
 };
 ```
 
+### Customizing the Logo
+
+To replace the default LiveKit logo with your own custom logo:
+
+1. **Replace the logo files** in the `public/` directory:
+   - `public/lk-logo.svg` - Light mode logo
+   - `public/lk-logo-dark.svg` - Dark mode logo
+
+2. **Logo specifications**:
+   - Format: SVG (recommended for scalability)
+   - Viewbox: Any size (e.g., `viewBox="0 0 40.8 40"`)
+   - The logo will be displayed at 48px button size with scaling applied
+   - Ensure your SVG has proper colors defined (not relying on CSS variables)
+
+3. **Where the logo appears**:
+   - Floating popup button (bottom-right corner)
+   - Error message screens
+   - Both embedded widget and standalone pages
+
+4. **Important notes**:
+   - Keep the same filenames: `lk-logo.svg` and `lk-logo-dark.svg`
+   - The logo displays with a circular colored background
+   - For best results, design your logo to work well in a circular frame
+   - Test both light and dark mode versions
+
+5. **After replacing the logos**:
+   - Rebuild the project: `pnpm build`
+   - Redeploy to Vercel
+   - Clear browser cache to see changes immediately
+
 ### Environment Variables
 
 | Variable | Description | Required | Default |

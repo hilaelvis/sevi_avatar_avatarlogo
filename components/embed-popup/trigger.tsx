@@ -81,14 +81,8 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
                 exit={{ opacity: 0, y: popupOpen ? 20 : -20 }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               >
-                <div
-                  className="bg-bg1 size-5"
-                  // webpack build throws if I use custom tailwind classes to achive this
-                  style={{
-                    maskImage: `url(${logoSrc})`,
-                    maskSize: 'contain',
-                  }}
-                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`${logoSrc}?v=8`} alt="Logo" className="w-20 h-20" style={{ transform: 'scale(1.8)' }} />
               </motion.div>
             )}
             {(isAgentConnecting || (error && popupOpen)) && (

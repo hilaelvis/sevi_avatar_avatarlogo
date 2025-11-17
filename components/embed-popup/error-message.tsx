@@ -20,9 +20,9 @@ export function ErrorMessage({ error, baseUrl }: ErrorMessageProps) {
     >
       <div className="pl-3">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logoSrc} alt="LiveKit Logo" className="block size-6 dark:hidden" />
+        <img src={logoSrc} alt="LiveKit Logo" className="block size-12 dark:hidden" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={logoDarkSrc} alt="LiveKit Logo" className="hidden size-6 dark:block" />
+        <img src={logoDarkSrc} alt="LiveKit Logo" className="hidden size-12 dark:block" />
       </div>
 
       <div className="flex w-full flex-col justify-center gap-4 overflow-auto px-8 text-center">
