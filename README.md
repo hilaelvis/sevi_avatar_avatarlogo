@@ -370,6 +370,19 @@ Alternatively, embed directly as an iframe:
   - **Headers Added**: `Access-Control-Allow-Origin`, `Access-Control-Allow-Headers` (including `x-sandbox-id`)
   - **Now Supports**: Embedding on any website with `<script>` tag
 
+**Fix #3: Missing Logo Assets in Embedded Widget**
+- 🐛 **FIXED**: Logo images loading from wrong domain when embedded
+  - **Issue**: Logo SVG files returned 404 errors when widget embedded on external sites
+  - **Symptoms**:
+    - `GET https://sevitech.org/lk-logo.svg 404 (Not Found)` errors
+    - Logos tried to load from embedding site instead of Vercel
+  - **Root Cause**: Relative paths `/lk-logo.svg` resolved to embedding domain
+  - **Solution**: Changed all logo paths to absolute URLs pointing to Vercel deployment
+  - **Files Changed**:
+    - [`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx)
+    - [`components/embed-popup/error-message.tsx`](./components/embed-popup/error-message.tsx)
+  - **Now Works**: Logos load correctly from Vercel regardless of embedding domain
+
 ---
 
 ## 📞 Support & Resources
