@@ -327,6 +327,270 @@ Alternatively, embed directly as an iframe:
 3. ✅ Check Node.js version: `node --version` (should be 22+)
 4. ✅ Try `pnpm build-embed-popup-script` first
 
+## 📝 Code Modifications from Original Template
+
+This section documents all changes made to the LiveKit Agents starter template to make it work properly with embedded widgets. **Apply these same fixes when setting up other agents.**
+
+### Overview of Changes
+
+When using the LiveKit Agents starter template, you'll encounter three main issues:
+1. **Agent won't connect** - Missing agent name configuration
+2. **CORS errors when embedding** - Missing cross-origin headers
+3. **Logo 404 errors when embedding** - Assets load from wrong domain
+
+Below are the exact code changes needed to fix these issues.
+
+---
+
+### 🔧 Change #1: Configure Agent Name
+
+**File**: [`app-config.ts`](./app-config.ts)
+
+**Problem**: Frontend doesn't know which agent to request from LiveKit.
+
+**Solution**: Add `agentName` field to match your backend agent name.
+
+```typescript
+// BEFORE (original template)
+export const APP_CONFIG_DEFAULTS: AppConfig = {
+  supportsChatInput: true,
+  supportsVideoInput: true,
+  supportsScreenShare: true,
+  isPreConnectBufferEnabled: true,
+};
+
+// AFTER (with agent name)
+export const APP_CONFIG_DEFAULTS: AppConfig = {
+  agentName: 'restorant_agent', // ⬅️ ADD THIS - Must match backend agent name
+  supportsChatInput: true,
+  supportsVideoInput: true,
+  supportsScreenShare: true,
+  isPreConnectBufferEnabled: true,
+};
+```
+
+**Important**: Replace `'restorant_agent'` with your actual agent name from your Python backend.
+
+---
+
+### 🔧 Change #2: Add CORS Headers for Embedding
+
+**File**: [`app/api/connection-details/route.ts`](./app/api/connection-details/route.ts)
+
+**Problem**: Widget fails with CORS errors when embedded on external websites.
+
+**Solution**: Add CORS headers to allow cross-origin requests.
+
+```typescript
+// ADD THIS after the environment variable declarations (around line 11)
+// CORS headers for embedded usage
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-sandbox-id',
+  'Access-Control-Max-Age': '86400',
+};
+
+// ADD THIS to handle preflight requests
+// Handle OPTIONS preflight request
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+```
+
+Then modify the `POST` function to include CORS headers in responses:
+
+```typescript
+export async function POST(req: Request) {
+  try {
+    // ... existing code ...
+
+    // MODIFY THIS SECTION (around line 70)
+    const headers = new Headers({
+      'Cache-Control': 'no-store',
+      ...corsHeaders, // ⬅️ ADD THIS
+    });
+    return NextResponse.json(data, { headers });
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      return new NextResponse(error.message, {
+        status: 500,
+        headers: corsHeaders, // ⬅️ ADD THIS
+      });
+    }
+  }
+}
+```
+
+---
+
+### 🔧 Change #3: Fix Logo Loading from Vercel
+
+When the widget embeds on external sites, logos try to load from the embedding domain instead of your Vercel deployment. This requires changes to **4 files**.
+
+#### 3.1. Pass Base URL from Script Tag
+
+**File**: [`components/embed-popup/standalone-bundle-root.tsx`](./components/embed-popup/standalone-bundle-root.tsx)
+
+```typescript
+// BEFORE (around line 27-30)
+getAppConfig(window.location.origin, sandboxIdAttribute)
+  .then((appConfig) => {
+    const root = ReactDOM.createRoot(reactRoot);
+    root.render(<EmbedFixedAgentClient appConfig={appConfig} />);
+  })
+
+// AFTER
+getAppConfig(window.location.origin, sandboxIdAttribute)
+  .then((appConfig) => {
+    const root = ReactDOM.createRoot(reactRoot);
+    root.render(
+      <EmbedFixedAgentClient
+        appConfig={{ ...appConfig, sandboxId: sandboxIdAttribute }} // ⬅️ MODIFIED
+      />
+    );
+  })
+```
+
+#### 3.2. Forward Base URL to Child Components
+
+**File**: [`components/embed-popup/agent-client.tsx`](./components/embed-popup/agent-client.tsx)
+
+```typescript
+// BEFORE (around line 115)
+<Trigger error={error} popupOpen={popupOpen} onToggle={handleTogglePopup} />
+
+// AFTER
+<Trigger
+  error={error}
+  popupOpen={popupOpen}
+  onToggle={handleTogglePopup}
+  baseUrl={appConfig.sandboxId} // ⬅️ ADD THIS
+/>
+```
+
+```typescript
+// BEFORE (around line 138)
+<ErrorMessage error={error} />
+
+// AFTER
+<ErrorMessage error={error} baseUrl={appConfig.sandboxId} /> // ⬅️ ADD baseUrl prop
+```
+
+#### 3.3. Update ErrorMessage Component
+
+**File**: [`components/embed-popup/error-message.tsx`](./components/embed-popup/error-message.tsx)
+
+```typescript
+// BEFORE
+interface ErrorMessageProps {
+  error: EmbedErrorDetails | null;
+}
+
+export function ErrorMessage({ error }: ErrorMessageProps) {
+  return (
+    <div>
+      {/* ... */}
+      <img src="/lk-logo.svg" alt="LiveKit Logo" className="block size-6 dark:hidden" />
+      <img src="/lk-logo-dark.svg" alt="LiveKit Logo" className="hidden size-6 dark:block" />
+      {/* ... */}
+    </div>
+  );
+}
+
+// AFTER
+interface ErrorMessageProps {
+  error: EmbedErrorDetails | null;
+  baseUrl?: string; // ⬅️ ADD THIS
+}
+
+export function ErrorMessage({ error, baseUrl }: ErrorMessageProps) {
+  // ⬅️ ADD THESE LINES
+  const logoSrc = baseUrl ? `${baseUrl}/lk-logo.svg` : '/lk-logo.svg';
+  const logoDarkSrc = baseUrl ? `${baseUrl}/lk-logo-dark.svg` : '/lk-logo-dark.svg';
+
+  return (
+    <div>
+      {/* ... */}
+      <img src={logoSrc} alt="LiveKit Logo" className="block size-6 dark:hidden" />
+      <img src={logoDarkSrc} alt="LiveKit Logo" className="hidden size-6 dark:block" />
+      {/* ... */}
+    </div>
+  );
+}
+```
+
+#### 3.4. Update Trigger Component
+
+**File**: [`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx)
+
+```typescript
+// BEFORE
+interface TriggerProps {
+  error: EmbedErrorDetails | null;
+  popupOpen: boolean;
+  onToggle: () => void;
+}
+
+export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
+  // ... component code ...
+
+  <div
+    className="bg-bg1 size-5"
+    style={{
+      maskImage: 'url(/lk-logo.svg)',
+      maskSize: 'contain',
+    }}
+  />
+}
+
+// AFTER
+interface TriggerProps {
+  error: EmbedErrorDetails | null;
+  popupOpen: boolean;
+  onToggle: () => void;
+  baseUrl?: string; // ⬅️ ADD THIS
+}
+
+export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
+  // ⬅️ ADD THIS LINE
+  const logoSrc = baseUrl ? `${baseUrl}/lk-logo.svg` : '/lk-logo.svg';
+
+  // ... component code ...
+
+  <div
+    className="bg-bg1 size-5"
+    style={{
+      maskImage: `url(${logoSrc})`, // ⬅️ MODIFIED
+      maskSize: 'contain',
+    }}
+  />
+}
+```
+
+---
+
+### 📋 Quick Checklist for New Agents
+
+When setting up a new agent with this frontend template:
+
+- [ ] **Step 1**: Add `agentName` to `app-config.ts` matching your backend
+- [ ] **Step 2**: Add CORS headers to `app/api/connection-details/route.ts`
+- [ ] **Step 3**: Update logo loading (4 files):
+  - [ ] `components/embed-popup/standalone-bundle-root.tsx`
+  - [ ] `components/embed-popup/agent-client.tsx`
+  - [ ] `components/embed-popup/error-message.tsx`
+  - [ ] `components/embed-popup/trigger.tsx`
+- [ ] **Step 4**: Build and test: `pnpm build`
+- [ ] **Step 5**: Deploy to Vercel
+- [ ] **Step 6**: Test embedding on external website
+
+---
+
 ## 📝 Changelog
 
 ### 2025-01-17 - Initial Setup & Configuration
