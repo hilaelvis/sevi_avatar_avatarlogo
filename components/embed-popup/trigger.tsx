@@ -55,10 +55,11 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
         {/* icon */}
         <div
           className={cn(
-            'relative z-20 grid size-16 place-items-center rounded-full transition-colors border-[3px]',
-            !popupOpen && 'bg-[rgb(0,191,165)] border-[rgb(0,191,165)]',
+            'relative z-20 grid size-16 place-items-center rounded-full border-[3px] transition-colors',
+            !popupOpen && 'border-[rgb(0,191,165)] bg-[rgb(0,191,165)]',
             !error && isAgentConnecting && 'bg-bg1 border-[rgb(0,191,165)]/30',
-            (isAgentConnected || (error && popupOpen)) && 'bg-destructive border-destructive-foreground'
+            (isAgentConnected || (error && popupOpen)) &&
+              'bg-destructive border-destructive-foreground'
           )}
         >
           <AnimatePresence>
