@@ -27,7 +27,9 @@ if (sandboxIdAttribute) {
   getAppConfig(window.location.origin, sandboxIdAttribute)
     .then((appConfig) => {
       const root = ReactDOM.createRoot(reactRoot);
-      root.render(<EmbedFixedAgentClient appConfig={appConfig} />);
+      root.render(
+        <EmbedFixedAgentClient appConfig={{ ...appConfig, sandboxId: sandboxIdAttribute }} />
+      );
     })
     .catch((err) => {
       console.error('LiveKit popup embed error - Error loading app config:', err);

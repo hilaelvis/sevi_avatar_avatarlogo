@@ -11,9 +11,11 @@ interface TriggerProps {
   error: EmbedErrorDetails | null;
   popupOpen: boolean;
   onToggle: () => void;
+  baseUrl?: string;
 }
 
-export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
+export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
+  const logoSrc = baseUrl ? `${baseUrl}/lk-logo.svg` : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =
@@ -82,7 +84,7 @@ export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
                   className="bg-bg1 size-5"
                   // webpack build throws if I use custom tailwind classes to achive this
                   style={{
-                    maskImage: 'url(/lk-logo.svg)',
+                    maskImage: `url(${logoSrc})`,
                     maskSize: 'contain',
                   }}
                 />
