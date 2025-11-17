@@ -5,6 +5,7 @@ A Next.js-based web interface for interacting with a LiveKit-powered restaurant 
 ## 🎯 Project Overview
 
 This frontend application provides a web interface for customers to interact with an AI-powered restaurant agent that can:
+
 - Check table availability
 - Make reservations
 - Find existing reservations
@@ -40,9 +41,11 @@ The agent communicates via voice using LiveKit's real-time infrastructure and Op
 ## 🚀 Deployment
 
 ### Live URL
+
 - **Production**: https://restorant-demo-frontend.vercel.app/
 
 ### GitHub Repository
+
 - **Repository**: https://github.com/hilaelvis/restorant_demo_frontend
 
 ---
@@ -141,6 +144,7 @@ NEXT_PUBLIC_CONN_DETAILS_ENDPOINT=http://localhost:3000/api/connection-details
 ```
 
 **Important**:
+
 - Keep `.env.local` private - it's in `.gitignore` for security
 - For Vercel deployment, set these as environment variables in the Vercel dashboard
 - `NEXT_PUBLIC_CONN_DETAILS_ENDPOINT` is optional - if not set, it defaults to `/api/connection-details`
@@ -182,9 +186,9 @@ Customize the frontend behavior by editing [`app-config.ts`](./app-config.ts):
 
 ```ts
 export const APP_CONFIG_DEFAULTS = {
-  supportsChatInput: true,       // Enable text chat input
-  supportsVideoInput: true,      // Enable video streaming
-  supportsScreenShare: true,     // Enable screen sharing
+  supportsChatInput: true, // Enable text chat input
+  supportsVideoInput: true, // Enable video streaming
+  supportsScreenShare: true, // Enable screen sharing
   isPreConnectBufferEnabled: true, // Pre-connect audio buffer
 };
 ```
@@ -221,12 +225,12 @@ To replace the default LiveKit logo with your own custom logo:
 
 ### Environment Variables
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `LIVEKIT_URL` | LiveKit server WebSocket URL | ✅ Yes | - |
-| `LIVEKIT_API_KEY` | LiveKit API key | ✅ Yes | - |
-| `LIVEKIT_API_SECRET` | LiveKit API secret | ✅ Yes | - |
-| `NEXT_PUBLIC_CONN_DETAILS_ENDPOINT` | Connection endpoint URL | ❌ No | `/api/connection-details` |
+| Variable                            | Description                  | Required | Default                   |
+| ----------------------------------- | ---------------------------- | -------- | ------------------------- |
+| `LIVEKIT_URL`                       | LiveKit server WebSocket URL | ✅ Yes   | -                         |
+| `LIVEKIT_API_KEY`                   | LiveKit API key              | ✅ Yes   | -                         |
+| `LIVEKIT_API_SECRET`                | LiveKit API secret           | ✅ Yes   | -                         |
+| `NEXT_PUBLIC_CONN_DETAILS_ENDPOINT` | Connection endpoint URL      | ❌ No    | `/api/connection-details` |
 
 **Security Note**: Only `NEXT_PUBLIC_*` variables are exposed to the browser. API keys and secrets remain server-side.
 
@@ -270,7 +274,7 @@ The frontend requests a specific agent via the LiveKit room configuration. The a
 ```typescript
 // Frontend: app/api/connection-details/route.ts
 at.roomConfig = new RoomConfiguration({
-  agents: [{ agentName: "restorant_agent" }],
+  agents: [{ agentName: 'restorant_agent' }],
 });
 ```
 
@@ -303,6 +307,7 @@ Add this script tag to any website to embed the restaurant agent as a popup:
 ```
 
 **Features:**
+
 - ✅ Floating button that opens voice agent popup
 - ✅ Works on any website (CORS enabled)
 - ✅ No additional configuration needed
@@ -331,6 +336,7 @@ Alternatively, embed directly as an iframe:
 **Symptoms**: Frontend loads but agent doesn't join the room
 
 **Solutions**:
+
 1. ✅ Verify the agent is running: `python -m livekit.agents dev agent.py`
 2. ✅ Check agent name matches: Frontend requests `restorant_agent`
 3. ✅ Verify LiveKit credentials match in both agent and frontend
@@ -342,6 +348,7 @@ Alternatively, embed directly as an iframe:
 **Symptoms**: Connection fails with authentication errors
 
 **Solutions**:
+
 1. ✅ Restart dev server after changing `.env.local`
 2. ✅ Verify no typos in environment variable names
 3. ✅ Check Vercel environment variables are set correctly
@@ -352,6 +359,7 @@ Alternatively, embed directly as an iframe:
 **Symptoms**: `pnpm build` fails
 
 **Solutions**:
+
 1. ✅ Delete `node_modules` and `.next` folders
 2. ✅ Run `pnpm install` again
 3. ✅ Check Node.js version: `node --version` (should be 22+)
@@ -364,6 +372,7 @@ This section documents all changes made to the LiveKit Agents starter template t
 ### Overview of Changes
 
 When using the LiveKit Agents starter template, you'll encounter three main issues:
+
 1. **Agent won't connect** - Missing agent name configuration
 2. **CORS errors when embedding** - Missing cross-origin headers
 3. **Logo 404 errors when embedding** - Assets load from wrong domain
@@ -648,6 +657,7 @@ const connect = async () => {
 ```
 
 **Why This Works**:
+
 1. `getUserMedia()` shows the browser's microphone permission prompt
 2. User grants permission (promise resolves)
 3. Room connects AFTER permission is granted
@@ -655,6 +665,7 @@ const connect = async () => {
 5. Microphone track publishes successfully
 
 **Benefits**:
+
 - ✅ Fixes mobile microphone issues
 - ✅ Agent waits for user permission before joining
 - ✅ No muted audio on mobile
@@ -715,6 +726,7 @@ const connect = async () => {
 ```
 
 **Benefits**:
+
 - ✅ Better accessibility for hearing-impaired users
 - ✅ Easier to review conversation history
 - ✅ Real-time text display as agent speaks
@@ -747,6 +759,7 @@ When setting up a new agent with this frontend template:
 ### 2025-01-17 - Initial Setup & Configuration
 
 #### ✅ Completed Tasks
+
 - ✅ Recreated Python virtual environment for LiveKit agent
 - ✅ Installed all Python dependencies (livekit-agents, openai, mem0ai, etc.)
 - ✅ Verified agent environment configuration
@@ -757,6 +770,7 @@ When setting up a new agent with this frontend template:
 - ✅ Created comprehensive README documentation
 
 #### 🔧 Current Configuration
+
 - **LiveKit Server**: `wss://restorantagent-7fh5f3gt.livekit.cloud`
 - **Agent Name**: `restorant_agent`
 - **Frontend Room Pattern**: `voice_assistant_room_*`
@@ -766,6 +780,7 @@ When setting up a new agent with this frontend template:
 #### 🔍 Bug Fixes
 
 **Fix #1: Agent Connection Issue**
+
 - 🐛 **FIXED**: Added missing `agentName: 'restorant_agent'` to `app-config.ts`
   - **Issue**: Frontend wasn't requesting the correct agent from LiveKit
   - **Symptom**: "Agent did not join the room" error on frontend
@@ -774,6 +789,7 @@ When setting up a new agent with this frontend template:
   - **File Changed**: [`app-config.ts`](./app-config.ts)
 
 **Fix #2: CORS Error on Embedded Widget**
+
 - 🐛 **FIXED**: Added CORS headers to allow embedding on external websites
   - **Issue**: Embed popup script failed when embedded on external domains
   - **Symptoms**:
@@ -786,6 +802,7 @@ When setting up a new agent with this frontend template:
   - **Now Supports**: Embedding on any website with `<script>` tag
 
 **Fix #3: Logo 404 Errors on Embedded Widget**
+
 - 🐛 **FIXED**: Logos now load from Vercel deployment instead of embedding domain
   - **Issue**: Logo SVG files returned 404 errors when widget embedded on external sites
   - **Symptom**: `GET https://sevitech.org/lk-logo.svg 404 (Not Found)`
@@ -800,6 +817,7 @@ When setting up a new agent with this frontend template:
   - **Result**: Logos now load correctly from Vercel regardless of embedding domain
 
 **Fix #4: Mobile Microphone Permission Issues**
+
 - 🐛 **FIXED**: Agent no longer starts talking before user grants microphone permission on mobile
   - **Issue**: On mobile devices, agent would start talking before user granted mic permission, causing muted audio and requiring multiple refreshes
   - **Symptoms**:
@@ -823,6 +841,7 @@ When setting up a new agent with this frontend template:
   - **Result**: Smooth mobile experience with proper permission handling
 
 **Enhancement #1: Transcript Toggle (Reverted from Always-Visible)**
+
 - ✨ **CHANGED**: Transcript only shows when chat button is toggled
   - **Reason**: Keeps mobile UI clean and uncluttered
   - **Behavior**: Users can click chat button to view conversation transcript

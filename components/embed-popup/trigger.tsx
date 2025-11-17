@@ -82,7 +82,12 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`${logoSrc}?v=8`} alt="Logo" className="w-20 h-20" style={{ transform: 'scale(1.8)' }} />
+                <img
+                  src={`${logoSrc}?v=8`}
+                  alt="Logo"
+                  className="h-20 w-20"
+                  style={{ transform: 'scale(1.8)' }}
+                />
               </motion.div>
             )}
             {(isAgentConnecting || (error && popupOpen)) && (
