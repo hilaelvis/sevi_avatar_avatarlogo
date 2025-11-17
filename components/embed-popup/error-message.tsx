@@ -7,8 +7,9 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ error, baseUrl }: ErrorMessageProps) {
-  const logoSrc = baseUrl ? `${baseUrl}/lk-logo.svg` : '/lk-logo.svg';
-  const logoDarkSrc = baseUrl ? `${baseUrl}/lk-logo-dark.svg` : '/lk-logo-dark.svg';
+  const fullBaseUrl = baseUrl ? `${baseUrl}.vercel.app` : '';
+  const logoSrc = fullBaseUrl ? `${fullBaseUrl}/lk-logo.svg` : '/lk-logo.svg';
+  const logoDarkSrc = fullBaseUrl ? `${fullBaseUrl}/lk-logo-dark.svg` : '/lk-logo-dark.svg';
   return (
     <div
       inert={error === null}

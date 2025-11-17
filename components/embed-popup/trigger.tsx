@@ -15,7 +15,8 @@ interface TriggerProps {
 }
 
 export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
-  const logoSrc = baseUrl ? `${baseUrl}/lk-logo.svg` : '/lk-logo.svg';
+  const fullBaseUrl = baseUrl ? `${baseUrl}.vercel.app` : '';
+  const logoSrc = fullBaseUrl ? `${fullBaseUrl}/lk-logo.svg` : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =
