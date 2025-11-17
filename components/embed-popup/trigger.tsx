@@ -47,29 +47,18 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
         }}
         onClick={onToggle}
         className={cn(
-          'relative m-0 block size-12 p-0.5 drop-shadow-md',
+          'relative m-0 block size-16 p-0 drop-shadow-md',
           'scale-100 transition-[scale] duration-300 hover:scale-105 focus:scale-105',
           'fixed right-4 bottom-4 z-50'
         )}
       >
-        {/* ring */}
-        <motion.div
-          className={cn(
-            'absolute inset-0 z-10 rounded-full transition-colors',
-            !popupOpen && 'bg-fgAccent',
-            !error &&
-              isAgentConnecting &&
-              'bg-fgAccent/30 animate-spin [background-image:conic-gradient(from_0deg,transparent_0%,transparent_30%,var(--color-fgAccent)_50%,transparent_70%,transparent_100%)]',
-            (isAgentConnected || (error && popupOpen)) && 'bg-destructive-foreground'
-          )}
-        />
         {/* icon */}
         <div
           className={cn(
-            'relative z-20 grid size-11 place-items-center rounded-full transition-colors',
-            !popupOpen && 'bg-fgAccent',
-            !error && isAgentConnecting && 'bg-bg1',
-            (isAgentConnected || (error && popupOpen)) && 'bg-destructive'
+            'relative z-20 grid size-16 place-items-center rounded-full transition-colors border-[3px]',
+            !popupOpen && 'bg-[rgb(0,191,165)] border-[rgb(0,191,165)]',
+            !error && isAgentConnecting && 'bg-bg1 border-[rgb(0,191,165)]/30',
+            (isAgentConnected || (error && popupOpen)) && 'bg-destructive border-destructive-foreground'
           )}
         >
           <AnimatePresence>
@@ -83,10 +72,10 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`${logoSrc}?v=8`}
+                  src={`${logoSrc}?v=17`}
                   alt="Logo"
-                  className="h-20 w-20"
-                  style={{ transform: 'scale(1.8)' }}
+                  className="h-16 w-16"
+                  style={{ transform: 'scale(1.6)' }}
                 />
               </motion.div>
             )}
