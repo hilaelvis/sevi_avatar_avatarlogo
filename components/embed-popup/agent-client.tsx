@@ -81,14 +81,14 @@ function AgentClient({ appConfig }: EmbedFixedAgentClientProps) {
 
     const connect = async () => {
       try {
-        // First, request microphone permission and enable it
+        // First, connect to the room
+        const connectionDetails = await existingOrRefreshConnectionDetails();
+        await room.connect(connectionDetails.serverUrl, connectionDetails.participantToken);
+
+        // After room is connected, enable microphone
         await room.localParticipant.setMicrophoneEnabled(true, undefined, {
           preConnectBuffer: appConfig.isPreConnectBufferEnabled,
         });
-
-        // Only connect to the room after microphone is enabled
-        const connectionDetails = await existingOrRefreshConnectionDetails();
-        await room.connect(connectionDetails.serverUrl, connectionDetails.participantToken);
       } catch (error) {
         if (error instanceof Error) {
           console.error('Error connecting to agent:', error);
