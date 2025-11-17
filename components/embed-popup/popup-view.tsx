@@ -110,15 +110,15 @@ export const PopupView = ({
   return (
     <div ref={ref} inert={disabled} className="flex h-full w-full flex-col overflow-hidden">
       <div className="relative flex h-full shrink-1 grow-1 flex-col">
-        {/* Transcript - Always visible */}
+        {/* Transcript - Only visible when chat is toggled */}
         <TranscriptMotion
           initial={{
-            y: 0,
-            opacity: 1,
+            y: 10,
+            opacity: 0,
           }}
           animate={{
-            y: 0,
-            opacity: 1,
+            y: chatOpen ? 0 : 10,
+            opacity: chatOpen ? 1 : 0,
           }}
           transition={{
             type: 'spring',
@@ -126,7 +126,6 @@ export const PopupView = ({
             bounce: 0,
           }}
           messages={messages}
-          className="pointer-events-none"
         />
 
         {/* Audio Visualizer */}
