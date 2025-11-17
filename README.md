@@ -574,6 +574,65 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
 
 ---
 
+### 🔧 Enhancement #1: Make Transcript Always Visible (Optional)
+
+**File**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
+
+**What it does**: Shows conversation text in real-time without requiring users to toggle the chat button.
+
+**Original behavior**: Transcript only visible when chat button is clicked.
+
+**Enhanced behavior**: Transcript always visible during conversation.
+
+```typescript
+// BEFORE (around line 113-129)
+{/* Transcript */}
+<TranscriptMotion
+  initial={{
+    y: 10,
+    opacity: 0,
+  }}
+  animate={{
+    y: chatOpen ? 0 : 10,
+    opacity: chatOpen ? 1 : 0,
+  }}
+  transition={{
+    type: 'spring',
+    duration: 0.5,
+    bounce: 0,
+  }}
+  messages={messages}
+/>
+
+// AFTER
+{/* Transcript - Always visible */}
+<TranscriptMotion
+  initial={{
+    y: 0,
+    opacity: 1,
+  }}
+  animate={{
+    y: 0,
+    opacity: 1,
+  }}
+  transition={{
+    type: 'spring',
+    duration: 0.5,
+    bounce: 0,
+  }}
+  messages={messages}
+  className="pointer-events-none"  // ⬅️ ADD THIS to prevent blocking interactions
+/>
+```
+
+**Benefits**:
+- ✅ Better accessibility for hearing-impaired users
+- ✅ Easier to review conversation history
+- ✅ Real-time text display as agent speaks
+- ✅ Chat input button still works for sending messages
+
+---
+
 ### 📋 Quick Checklist for New Agents
 
 When setting up a new agent with this frontend template:
@@ -585,9 +644,10 @@ When setting up a new agent with this frontend template:
   - [ ] `components/embed-popup/agent-client.tsx`
   - [ ] `components/embed-popup/error-message.tsx`
   - [ ] `components/embed-popup/trigger.tsx`
-- [ ] **Step 4**: Build and test: `pnpm build`
-- [ ] **Step 5**: Deploy to Vercel
-- [ ] **Step 6**: Test embedding on external website
+- [ ] **Step 4** (Optional): Make transcript always visible in `popup-view.tsx`
+- [ ] **Step 5**: Build and test: `pnpm build`
+- [ ] **Step 6**: Deploy to Vercel
+- [ ] **Step 7**: Test embedding on external website
 
 ---
 
@@ -643,10 +703,27 @@ When setting up a new agent with this frontend template:
   - **Files Changed**:
     - [`components/embed-popup/standalone-bundle-root.tsx`](./components/embed-popup/standalone-bundle-root.tsx) - Pass sandboxId to app config
     - [`components/embed-popup/agent-client.tsx`](./components/embed-popup/agent-client.tsx) - Forward baseUrl prop
-    - [`components/embed-popup/error-message.tsx`](./components/embed-popup/error-message.tsx) - Use dynamic logo URLs
-    - [`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx) - Use dynamic logo URLs
-  - **How It Works**: The `data-lk-sandbox-id` attribute contains the Vercel deployment URL, which is passed down through components to construct full logo URLs like `https://restorant-demo-frontend.vercel.app/lk-logo.svg`
+    - [`components/embed-popup/error-message.tsx`](./components/embed-popup/error-message.tsx) - Use dynamic logo URLs with `.vercel.app` appended
+    - [`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx) - Use dynamic logo URLs with `.vercel.app` appended
+  - **How It Works**: The `data-lk-sandbox-id` attribute contains the Vercel deployment subdomain (e.g., `https://restorant-demo-frontend`), which is appended with `.vercel.app` to construct full URLs like `https://restorant-demo-frontend.vercel.app/lk-logo.svg`
   - **Result**: Logos now load correctly from Vercel regardless of embedding domain
+
+**Enhancement #1: Always-Visible Transcript**
+- ✨ **ADDED**: Transcript now always visible during conversation
+  - **Feature**: Real-time text display of agent and user speech
+  - **Before**: Transcript only visible when chat button toggled
+  - **After**: Transcript always visible, updating in real-time as agent speaks
+  - **File Changed**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
+  - **Changes Made**:
+    - Set transcript opacity to always be 1 (fully visible)
+    - Removed dependency on `chatOpen` state for transcript visibility
+    - Added `pointer-events-none` class to prevent blocking UI interactions
+    - Chat input toggle still controls text message sending
+  - **Benefits**:
+    - Better accessibility for hearing-impaired users
+    - Easier to review conversation history
+    - No need to toggle chat button to see text
+  - **Result**: Users can now see the full conversation transcript automatically as the agent talks
 
 ---
 
