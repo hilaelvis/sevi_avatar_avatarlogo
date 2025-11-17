@@ -850,6 +850,160 @@ When setting up a new agent with this frontend template:
 
 ---
 
+## 🎨 UI Customizations
+
+This section documents the visual and behavioral customizations made to the default LiveKit template for the restaurant demo.
+
+### Logo and Branding
+
+**Custom Phone Icon Logo**:
+- Replaced default LiveKit logo with custom teal phone icon
+- Logo files: `public/lk-logo.svg` and `public/lk-logo-dark.svg`
+- Icon design: Phone handset without built-in circular background
+- Circular frame provided by CSS border (not embedded in SVG)
+
+**Logo Styling** ([`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx)):
+```typescript
+// Popup button configuration
+size-16 (64px container)
+border-[3px] (3px border thickness)
+Logo: h-16 w-16 with scale(1.6) = 102.4px effective size
+Border color: rgb(0,191,165) - custom teal color
+```
+
+**Key Decisions**:
+- SVG contains only the icon artwork (no background circle)
+- CSS provides the circular frame via `border-radius: 9999px`
+- Logo scales beyond container for prominent visibility
+- 3px border creates clean, professional appearance
+
+### Theme Colors
+
+**Custom Teal Accent Color** ([`styles/globals.css`](./styles/globals.css)):
+
+```css
+/* Light mode (line 21) */
+--fgAccent: #00bfa5;  /* rgb(0, 191, 165) - Custom teal */
+
+/* Dark mode (line 84) */
+--fgAccent: #00bfa5;  /* rgb(0, 191, 165) - Matches light mode */
+```
+
+**Color Application**:
+- Popup button background when closed: `bg-[rgb(0,191,165)]`
+- Button border: `border-[rgb(0,191,165)]`
+- Connecting state border: `border-[rgb(0,191,165)]/30` (30% opacity)
+- Consistent across light and dark themes
+
+**Why Custom Color**:
+- Original template used blue (`#002cf2` light, `#1fd5f9` dark)
+- Teal provides restaurant-friendly, approachable feel
+- Better brand alignment for hospitality industry
+
+### Chat Behavior
+
+**Default Chat State** ([`components/embed-popup/action-bar.tsx`](./components/embed-popup/action-bar.tsx)):
+
+```typescript
+// Line 39 - Chat opens by default
+const [chatOpen, setChatOpen] = React.useState(true);  // Changed from false
+```
+
+**Benefits**:
+- Users see conversation transcript immediately
+- No need to discover chat button functionality
+- Better transparency of AI conversation
+- Improved accessibility
+
+**User Can Still**:
+- Click chat button to hide transcript if desired
+- Type messages in chat input field
+- Toggle visibility at any time
+
+### Size and Scaling
+
+**Popup Button Dimensions**:
+- Container: `size-16` = 64px × 64px
+- Border: 3px solid teal
+- Logo: 64px base × 1.6 scale = 102.4px effective size
+- Logo intentionally overflows container for visibility
+
+**Size Optimization Process**:
+1. Started too small (invisible logo)
+2. Scaled up to 2.0 (too large)
+3. Reduced by 30% to 1.4 scale
+4. Fine-tuned to 1.6 for optimal balance
+5. Reduced container from size-24 to size-16 to tighten border
+
+**Cache Busting**:
+```typescript
+src={`${logoSrc}?v=17`}  // Version query param forces browser refresh
+```
+
+### Component Simplification
+
+**Removed Dual-Ring Animation**:
+
+Original template had:
+- Outer animated ring with conic gradient
+- Inner icon container
+- Complex state-based animations
+
+Simplified to:
+- Single container with border
+- Direct background color changes
+- Cleaner, more performant code
+
+**Before** (original):
+```typescript
+<div className="p-0.5">
+  <motion.div className="outer ring with gradient animation" />
+  <div className="inner icon container" />
+</div>
+```
+
+**After** (simplified):
+```typescript
+<div className="size-16 border-[3px] bg-[rgb(0,191,165)]">
+  <img src={logoSrc} className="h-16 w-16" style={{ transform: 'scale(1.6)' }} />
+</div>
+```
+
+### Mobile Optimizations
+
+**Logo Display Method**:
+- Using `<img>` tag instead of CSS `mask-image`
+- Preserves SVG colors natively (no color manipulation needed)
+- Better browser compatibility across mobile devices
+- Simpler implementation
+
+**Responsive Design**:
+- Fixed position: `fixed right-4 bottom-4`
+- Z-index: `z-50` ensures button stays on top
+- Scale animation on hover: `hover:scale-105`
+- Touch-friendly 64px tap target size
+
+### Visual Polish
+
+**Drop Shadow**:
+```typescript
+className="drop-shadow-md"  // Subtle depth effect
+```
+
+**Smooth Transitions**:
+```typescript
+transition-colors  // Color changes fade smoothly
+transition-[scale] duration-300  // Hover scale animates in 300ms
+```
+
+**State-Based Colors**:
+- Closed: Teal background with teal border
+- Connecting: Light gray background with semi-transparent teal border
+- Connected: Red background with white border (disconnect state)
+- Error: Red background with white border
+
+---
+
 ## 📞 Support & Resources
 
 - [LiveKit Documentation](https://docs.livekit.io/)
