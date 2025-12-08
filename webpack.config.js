@@ -64,4 +64,9 @@ module.exports = {
     usedExports: true,
     sideEffects: false,
   },
+  performance: {
+    hints: false, // Disable performance hints since large bundle is expected for embed script
+    maxEntrypointSize: 10000000, // 10MB - suppress warnings for standalone embed bundle
+    maxAssetSize: 10000000, // 10MB
+  },
 };
