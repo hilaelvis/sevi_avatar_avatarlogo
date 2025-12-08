@@ -840,13 +840,19 @@ When setting up a new agent with this frontend template:
     - Desktop functionality unaffected
   - **Result**: Smooth mobile experience with proper permission handling
 
-**Enhancement #1: Transcript Toggle (Reverted from Always-Visible)**
+**Enhancement #1: Avatar Mode as Default**
 
-- ✨ **CHANGED**: Transcript only shows when chat button is toggled
-  - **Reason**: Keeps mobile UI clean and uncluttered
-  - **Behavior**: Users can click chat button to view conversation transcript
-  - **File Changed**: [`components/embed-popup/popup-view.tsx`](./components/embed-popup/popup-view.tsx)
-  - **Result**: Cleaner mobile interface with transcript accessible on demand
+- ✨ **CURRENT STATE**: Popup opens in avatar mode by default (chat panel closed)
+  - **Reason**: Provides cleaner, more focused mobile-first experience
+  - **Behavior**: Chat panel closed by default; users can toggle to view transcript
+  - **File Changed**: [`components/embed-popup/action-bar.tsx`](./components/embed-popup/action-bar.tsx)
+  - **Implementation**: `const [chatOpen, setChatOpen] = React.useState(false);`
+  - **Benefits**:
+    - Cleaner interface on mobile devices
+    - Focus on voice interaction (primary use case)
+    - Chat transcript available on-demand
+    - Reduced cognitive load for users
+  - **Result**: Streamlined UX with transcript accessible via chat button toggle
 
 ---
 
@@ -905,18 +911,24 @@ Border color: rgb(0,191,165) - custom teal color
 **Default Chat State** ([`components/embed-popup/action-bar.tsx`](./components/embed-popup/action-bar.tsx)):
 
 ```typescript
-// Line 39 - Chat opens by default
-const [chatOpen, setChatOpen] = React.useState(true);  // Changed from false
+// Line 39 - Chat closed by default (Avatar mode)
+const [chatOpen, setChatOpen] = React.useState(false);
 ```
 
+**Current Behavior**:
+- Popup opens in **avatar mode** by default (chat panel closed)
+- Clean, focused interface showing only the voice avatar
+- Users can click the chat button to view conversation transcript
+- Provides a streamlined mobile-first experience
+
 **Benefits**:
-- Users see conversation transcript immediately
-- No need to discover chat button functionality
-- Better transparency of AI conversation
-- Improved accessibility
+- Cleaner, less cluttered interface on mobile devices
+- Focus on voice interaction (primary use case)
+- Chat transcript available on-demand via toggle button
+- Reduced cognitive load for users
 
 **User Can Still**:
-- Click chat button to hide transcript if desired
+- Click chat button to view conversation transcript
 - Type messages in chat input field
 - Toggle visibility at any time
 
