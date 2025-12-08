@@ -18,23 +18,14 @@
         {
           "key": "Access-Control-Allow-Methods",
           "value": "GET, HEAD, OPTIONS"
-        }
-      ]
-    },
-    {
-      "source": "/public/(.*)",
-      "headers": [
+        },
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
         }
       ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/embed-popup.js",
-      "destination": "/public/embed-popup.js"
-    }
-  ]
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next"
 }

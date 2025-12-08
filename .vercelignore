@@ -1,0 +1,6 @@
+# Vercel Build Configuration
+{
+  "buildCommand": "pnpm build",
+  "outputDirectory": ".next",
+  "installCommand": "pnpm install --frozen-lockfile"
+}
