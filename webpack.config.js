@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -9,7 +10,7 @@ module.exports = {
     path: path.resolve(__dirname, 'public'),
     filename: 'embed-popup.js', // Output file
   },
-  devtool: 'source-map', // Equivalent to sourcemap: true
+  devtool: false, // Disable source maps in production to reduce bundle size
   resolve: {
     alias: { '@/*': path.resolve(__dirname, '*') },
     extensions: ['.tsx', '.ts', '.js'], // Resolve TypeScript and JS files
@@ -43,5 +44,24 @@ module.exports = {
   externals: {
     // Mark LiveKitEmbedFixed as an external global (optional depending on usage)
     LiveKitEmbedFixed: 'LiveKitEmbedFixed',
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            pure_funcs: ['console.log', 'console.info'],
+            passes: 3,
+          },
+          format: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+    ],
+    usedExports: true,
+    sideEffects: false,
   },
 };
