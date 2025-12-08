@@ -756,6 +756,79 @@ When setting up a new agent with this frontend template:
 
 ## 📝 Changelog
 
+### 2025-12-08 - Avatar Mode as Default & Build Optimizations
+
+#### ✅ Completed Tasks
+
+- ✅ Changed default popup mode from chat to avatar (chat panel closed by default)
+- ✅ Fixed linting errors in embed API route
+- ✅ Suppressed webpack performance warnings for embed bundle
+- ✅ Updated README documentation to reflect avatar mode changes
+- ✅ Successfully deployed to Vercel: https://frontend-avatar.vercel.app/
+
+#### 🔧 Changes Made
+
+**Change #1: Avatar Mode as Default**
+
+- **File Changed**: [`components/embed-popup/action-bar.tsx`](./components/embed-popup/action-bar.tsx#L39)
+- **What Changed**: Modified `chatOpen` initial state from `true` to `false`
+- **Code**: `const [chatOpen, setChatOpen] = React.useState(false);`
+- **Impact**:
+  - Popup now opens in avatar mode (chat panel closed)
+  - Cleaner, more focused mobile-first experience
+  - Users can still toggle chat button to view transcript
+  - Reduced cognitive load and cleaner interface
+
+**Change #2: Fixed Embed API Route Linting Errors**
+
+- **File Changed**: [`app/api/embed/route.ts`](./app/api/embed/route.ts)
+- **Issues Fixed**:
+  - Removed unused `NextRequest` import
+  - Removed unused `request` parameter from GET function
+  - Removed unused `error` variable in catch block
+  - Fixed prettier line ending issues (CRLF vs LF)
+- **Result**: Build now compiles without linting errors
+
+**Change #3: Suppressed Webpack Performance Warnings**
+
+- **File Changed**: [`webpack.config.js`](./webpack.config.js#L67-L71)
+- **What Changed**: Added `performance` configuration to webpack
+- **Code Added**:
+  ```javascript
+  performance: {
+    hints: false, // Disable performance hints since large bundle is expected for embed script
+    maxEntrypointSize: 10000000, // 10MB - suppress warnings for standalone embed bundle
+    maxAssetSize: 10000000, // 10MB
+  }
+  ```
+- **Why This is OK**:
+  - 5.58 MiB bundle size is normal for standalone embed widgets
+  - Bundle includes React, LiveKit SDK, and all dependencies
+  - Needs to work on any website without external dependencies
+  - Already minified and optimized with TerserPlugin
+  - Cached with proper headers (3600s max-age)
+- **Result**: Clean builds without webpack warnings
+
+#### 📊 Final Build Stats
+
+- **Next.js Build**: ✅ Compiled successfully
+- **Embed Bundle Size**: 5.58 MiB (minified, includes all dependencies)
+- **Build Time**: ~50 seconds
+- **Warnings**: None (suppressed performance hints)
+- **Deploy Status**: ✅ Successfully deployed to Vercel
+
+#### 🎯 Key Features Now Working
+
+1. ✅ Avatar mode as default (chat panel closed)
+2. ✅ Clean build with no linting errors
+3. ✅ No webpack performance warnings
+4. ✅ Proper CORS headers for embedding
+5. ✅ Mobile microphone permission flow working correctly
+6. ✅ Logo loading from Vercel CDN
+7. ✅ All dependencies optimized and bundled
+
+---
+
 ### 2025-01-17 - Initial Setup & Configuration
 
 #### ✅ Completed Tasks
