@@ -1,8 +1,7 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import type { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const filePath = join(process.cwd(), 'public', 'embed-popup.js');
     const fileContent = readFileSync(filePath, 'utf-8');
@@ -17,7 +16,7 @@ export async function GET(request: NextRequest) {
         'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
       },
     });
-  } catch (error) {
+  } catch {
     return new Response('File not found', { status: 404 });
   }
 }
