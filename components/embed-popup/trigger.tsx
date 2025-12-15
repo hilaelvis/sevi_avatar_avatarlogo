@@ -51,7 +51,7 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
         className={cn(
           'relative m-0 block size-16 p-0 drop-shadow-md',
           'scale-100 transition-[scale] duration-300 hover:scale-105 focus:scale-105',
-          'fixed right-16 bottom-4 z-50'
+          'fixed right-8 bottom-4 z-50'
         )}
       >
         {/* Speech bubble */}
