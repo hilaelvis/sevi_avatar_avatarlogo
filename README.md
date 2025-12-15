@@ -229,7 +229,7 @@ The popup trigger has been customized in [`components/embed-popup/trigger.tsx`](
 
 - **Scale**: `transform: scale(3.6)` - Avatar appears 3.6x larger than original size
 - **No circular border**: Removed the teal circular background for clean avatar display
-- **Position**: Fixed at `right-16 bottom-8` (64px from right, 32px from bottom)
+- **Position**: Fixed at `right-8 bottom-4` (32px from right, 16px from bottom)
 
 **Speech Bubble**:
 
