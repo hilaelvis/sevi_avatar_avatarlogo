@@ -356,22 +356,60 @@ After making logo changes:
 
 #### 8. **Troubleshooting**
 
-**Logo not showing on embedded sites**:
+**Logo not showing on embedded sites (404 errors)**:
 
-- Verify `data-lk-sandbox-id` contains only subdomain (no `https://`)
-- Check browser console for 404 errors
-- Ensure SVG files exist in `public/` folder
-- Clear browser cache and hard refresh
+The code now automatically handles both formats for `data-lk-sandbox-id`:
+
+✅ **Both formats work**:
+
+```html
+<!-- With https:// prefix (old format) -->
+<script
+  src="https://sevi-avatar-avatarlogo.vercel.app/embed-popup.js"
+  data-lk-sandbox-id="https://sevi-avatar-avatarlogo"
+></script>
+
+<!-- Without prefix (recommended) -->
+<script
+  src="https://sevi-avatar-avatarlogo.vercel.app/embed-popup.js"
+  data-lk-sandbox-id="sevi-avatar-avatarlogo"
+></script>
+```
+
+**How it works**:
+
+- The code strips `https://` or `http://` from `baseUrl` using `.replace(/^https?:\/\//, '')`
+- Prevents malformed URLs like `https://https://...`
+- Constructs correct logo URL: `https://sevi-avatar-avatarlogo.vercel.app/lk-logo.svg`
+
+**If logo still not showing**:
+
+1. Check browser console for actual error (look for the exact URL being requested)
+2. Verify Vercel deployment completed successfully
+3. Ensure SVG files exist in `public/` folder
+4. Clear browser cache and hard refresh (Ctrl+Shift+R)
+5. Check that `data-lk-sandbox-id` matches your Vercel subdomain
 
 **Logo appears too small/large**:
 
 - Adjust `scale()` value in trigger.tsx line 98
 - Typical range: 2.0 to 4.0
+- Current setting: `scale(3.6)` for avatar logo
 
 **Speech bubble overlaps logo**:
 
 - Increase negative right value (e.g., `-right-6` to `-right-8`)
 - Speech bubble is z-0, logo is z-20, so logo should always be on top
+- Adjust `mb-4` to change vertical spacing
+
+**Common Issues & Solutions**:
+
+| Issue                                 | Cause                                    | Solution                                     |
+| ------------------------------------- | ---------------------------------------- | -------------------------------------------- |
+| Logo loads from wrong domain          | `baseUrl` undefined or empty             | Verify embed script has `data-lk-sandbox-id` |
+| Malformed URL (https://https://...)   | `data-lk-sandbox-id` includes `https://` | Code auto-strips this now (v2023-12-15+)     |
+| Logo shows on Vercel but not embedded | Relative path used instead of full URL   | Ensure `baseUrl` is passed to components     |
+| Changes not appearing                 | Old bundle cached                        | Wait for Vercel redeploy, clear cache        |
 
 ### Environment Variables
 
