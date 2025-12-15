@@ -14,9 +14,9 @@ interface TriggerProps {
   baseUrl?: string;
 }
 
-export function Trigger({ error = null, popupOpen, onToggle }: TriggerProps) {
-  // Always use relative path - works both locally and in production
-  const logoSrc = '/lk-logo.svg';
+export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
+  // Use baseUrl for embedded widgets, relative path for direct access
+  const logoSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =
