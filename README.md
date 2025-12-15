@@ -193,35 +193,172 @@ export const APP_CONFIG_DEFAULTS = {
 };
 ```
 
-### Customizing the Logo
+### Customizing the Avatar Popup Logo
 
-To replace the default LiveKit logo with your own custom logo:
+This project has been customized with a custom avatar logo and speech bubble. Here's a complete guide to the customizations:
 
-1. **Replace the logo files** in the `public/` directory:
-   - `public/lk-logo.svg` - Light mode logo
-   - `public/lk-logo-dark.svg` - Dark mode logo
+#### 1. **Replace Logo Files**
 
-2. **Logo specifications**:
-   - Format: SVG (recommended for scalability)
-   - Viewbox: Any size (e.g., `viewBox="0 0 40.8 40"`)
-   - The logo will be displayed at 48px button size with scaling applied
-   - Ensure your SVG has proper colors defined (not relying on CSS variables)
+Replace the logo files in the `public/` directory:
+- `public/lk-logo.svg` - Light mode avatar logo
+- `public/lk-logo-dark.svg` - Dark mode avatar logo (optional, can be same as light)
 
-3. **Where the logo appears**:
-   - Floating popup button (bottom-right corner)
-   - Error message screens
-   - Both embedded widget and standalone pages
+**Logo Requirements**:
+- Format: SVG (for scalability and quality)
+- Can embed PNG/images within SVG using base64 or references
+- Viewbox: Any size (automatically scaled)
+- File size: Keep under 2MB for optimal loading
 
-4. **Important notes**:
-   - Keep the same filenames: `lk-logo.svg` and `lk-logo-dark.svg`
-   - The logo displays with a circular colored background
-   - For best results, design your logo to work well in a circular frame
-   - Test both light and dark mode versions
+**Creating the SVG**:
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39.45 37.73">
+  <!-- Your avatar image embedded as base64 or SVG paths -->
+  <image width="1236" height="1182" transform="scale(0.03)"
+         xlink:href="data:image/png;base64,..." />
+</svg>
+```
 
-5. **After replacing the logos**:
-   - Rebuild the project: `pnpm build`
-   - Redeploy to Vercel
-   - Clear browser cache to see changes immediately
+#### 2. **Popup Button Customizations**
+
+The popup trigger has been customized in [`components/embed-popup/trigger.tsx`](components/embed-popup/trigger.tsx):
+
+**Logo Display**:
+- **Scale**: `transform: scale(3.6)` - Avatar appears 3.6x larger than original size
+- **No circular border**: Removed the teal circular background for clean avatar display
+- **Position**: Fixed at `right-16 bottom-8` (64px from right, 32px from bottom)
+
+**Speech Bubble**:
+- **Text**: "Posso aiutarti?" (Italian for "Can I help you?")
+- **Position**: Above and slightly left of avatar (`-right-6 bottom-full`)
+- **Styling**: White rounded bubble with shadow and small triangular tail
+- **Animation**: Fades in 0.5 seconds after page load with scale effect
+- **Z-index**: Behind avatar (z-0) to allow overlap without covering logo
+
+#### 3. **Code Changes**
+
+**File: `components/embed-popup/trigger.tsx`**
+```typescript
+// Logo path logic - works for both embedded and direct access
+const logoSrc = baseUrl
+  ? `https://${baseUrl}.vercel.app/lk-logo.svg`
+  : '/lk-logo.svg';
+
+// Removed circular border classes
+className="relative z-20 grid size-16 place-items-center transition-colors"
+
+// Increased logo scale
+<img
+  src={`${logoSrc}?v=17`}
+  alt="Logo"
+  className="h-16 w-16"
+  style={{ transform: 'scale(3.6)' }}
+/>
+
+// Added speech bubble
+<motion.div className="absolute -right-6 bottom-full z-0 mb-4">
+  <div className="relative rounded-2xl border border-gray-200 bg-white px-4 py-2 shadow-lg">
+    <p className="text-sm font-medium whitespace-nowrap text-gray-800">
+      Posso aiutarti?
+    </p>
+    {/* Triangular tail pointing to avatar */}
+    <div className="absolute right-4 -bottom-2 h-4 w-4 rotate-45 transform border-r border-b border-gray-200 bg-white"></div>
+  </div>
+</motion.div>
+```
+
+**File: `components/embed-popup/error-message.tsx`**
+```typescript
+// Logo paths for error states
+const logoSrc = baseUrl
+  ? `https://${baseUrl}.vercel.app/lk-logo.svg`
+  : '/lk-logo.svg';
+const logoDarkSrc = baseUrl
+  ? `https://${baseUrl}.vercel.app/lk-logo-dark.svg`
+  : '/lk-logo-dark.svg';
+```
+
+#### 4. **Embedding on External Sites**
+
+When embedding the widget on external websites (e.g., fastfood.sevitech.org):
+
+```html
+<script
+  src="https://sevi-avatar-avatarlogo.vercel.app/embed-popup.js"
+  data-lk-sandbox-id="sevi-avatar-avatarlogo"
+></script>
+```
+
+**Important**:
+- `data-lk-sandbox-id` should contain **ONLY the subdomain** (e.g., `sevi-avatar-avatarlogo`)
+- Do NOT include `https://` or `.vercel.app`
+- This ensures logos load from your Vercel deployment, not the embedding site
+
+#### 5. **Customization Options**
+
+**To change the speech bubble text**:
+```typescript
+// In components/embed-popup/trigger.tsx, line 68
+<p className="text-sm font-medium whitespace-nowrap text-gray-800 dark:text-white">
+  Your Custom Text Here
+</p>
+```
+
+**To adjust logo size**:
+```typescript
+// In components/embed-popup/trigger.tsx, line 98
+style={{ transform: 'scale(3.6)' }} // Change 3.6 to your preferred scale
+```
+
+**To change popup position**:
+```typescript
+// In components/embed-popup/trigger.tsx, line 54
+className="fixed right-16 bottom-8 z-50" // Adjust right-16 and bottom-8
+```
+
+**To adjust speech bubble position**:
+```typescript
+// In components/embed-popup/trigger.tsx, line 64
+className="absolute -right-6 bottom-full z-0 mb-4" // Adjust -right-6 and mb-4
+```
+
+#### 6. **Deployment**
+
+After making logo changes:
+
+1. **Local testing**: Changes auto-reload in dev mode (`pnpm dev`)
+2. **Format code**: Run `pnpm format` to ensure Prettier compliance
+3. **Commit changes**:
+   ```bash
+   git add public/lk-logo.svg components/embed-popup/trigger.tsx
+   git commit -m "Update avatar logo and customizations"
+   git push
+   ```
+4. **Vercel auto-deploys**: Push to GitHub triggers automatic deployment
+5. **Verify**: Check both direct access and embedded widget
+
+#### 7. **Where the Logo Appears**
+
+- ✅ Floating popup button (bottom-right corner)
+- ✅ Error message screens (with both light/dark variants)
+- ✅ Embedded widgets on external sites
+- ✅ Standalone pages on Vercel
+- ✅ Test pages (`/test/popup`)
+
+#### 8. **Troubleshooting**
+
+**Logo not showing on embedded sites**:
+- Verify `data-lk-sandbox-id` contains only subdomain (no `https://`)
+- Check browser console for 404 errors
+- Ensure SVG files exist in `public/` folder
+- Clear browser cache and hard refresh
+
+**Logo appears too small/large**:
+- Adjust `scale()` value in trigger.tsx line 98
+- Typical range: 2.0 to 4.0
+
+**Speech bubble overlaps logo**:
+- Increase negative right value (e.g., `-right-6` to `-right-8`)
+- Speech bubble is z-0, logo is z-20, so logo should always be on top
 
 ### Environment Variables
 
