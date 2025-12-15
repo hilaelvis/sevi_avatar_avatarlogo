@@ -15,8 +15,10 @@ interface TriggerProps {
 }
 
 export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
-  const fullBaseUrl = baseUrl ? `${baseUrl}.vercel.app` : '';
-  const logoSrc = fullBaseUrl ? `${fullBaseUrl}/lk-logo.svg` : '/lk-logo.svg';
+  // Use relative path for local development, full URL for production
+  const logoSrc = baseUrl && !baseUrl.includes('localhost')
+    ? `https://${baseUrl}.vercel.app/lk-logo.svg`
+    : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =
@@ -49,17 +51,34 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
         className={cn(
           'relative m-0 block size-16 p-0 drop-shadow-md',
           'scale-100 transition-[scale] duration-300 hover:scale-105 focus:scale-105',
-          'fixed right-4 bottom-4 z-50'
+          'fixed right-16 bottom-8 z-50'
         )}
       >
+        {/* Speech bubble */}
+        {!popupOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ delay: 0.5 }}
+            className="absolute bottom-full -right-6 mb-4 z-0"
+          >
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl px-4 py-2 shadow-lg border border-gray-200 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-800 dark:text-white whitespace-nowrap">
+                Posso aiutarti?
+              </p>
+              {/* Speech bubble tail */}
+              <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700 transform rotate-45"></div>
+            </div>
+          </motion.div>
+        )}
+
         {/* icon */}
         <div
           className={cn(
-            'relative z-20 grid size-16 place-items-center rounded-full border-[3px] transition-colors',
-            !popupOpen && 'border-[rgb(0,191,165)] bg-[rgb(0,191,165)]',
-            !error && isAgentConnecting && 'bg-bg1 border-[rgb(0,191,165)]/30',
-            (isAgentConnected || (error && popupOpen)) &&
-              'bg-destructive border-destructive-foreground'
+            'relative z-20 grid size-16 place-items-center transition-colors',
+            !error && isAgentConnecting && 'bg-bg1',
+            (isAgentConnected || (error && popupOpen)) && 'bg-destructive'
           )}
         >
           <AnimatePresence>
@@ -76,7 +95,7 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
                   src={`${logoSrc}?v=17`}
                   alt="Logo"
                   className="h-16 w-16"
-                  style={{ transform: 'scale(1.6)' }}
+                  style={{ transform: 'scale(3.6)' }}
                 />
               </motion.div>
             )}
