@@ -8,9 +8,11 @@ interface ErrorMessageProps {
 
 export function ErrorMessage({ error, baseUrl }: ErrorMessageProps) {
   // Use baseUrl for embedded widgets, relative path for direct access
-  const logoSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
-  const logoDarkSrc = baseUrl
-    ? `https://${baseUrl}.vercel.app/lk-logo-dark.svg`
+  // Strip https:// if present in baseUrl
+  const cleanBaseUrl = baseUrl?.replace(/^https?:\/\//, '');
+  const logoSrc = cleanBaseUrl ? `https://${cleanBaseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
+  const logoDarkSrc = cleanBaseUrl
+    ? `https://${cleanBaseUrl}.vercel.app/lk-logo-dark.svg`
     : '/lk-logo-dark.svg';
   return (
     <div

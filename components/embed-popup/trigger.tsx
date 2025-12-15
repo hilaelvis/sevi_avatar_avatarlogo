@@ -16,7 +16,9 @@ interface TriggerProps {
 
 export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
   // Use baseUrl for embedded widgets, relative path for direct access
-  const logoSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
+  // Strip https:// if present in baseUrl
+  const cleanBaseUrl = baseUrl?.replace(/^https?:\/\//, '');
+  const logoSrc = cleanBaseUrl ? `https://${cleanBaseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =

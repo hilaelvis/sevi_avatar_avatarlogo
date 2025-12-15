@@ -200,16 +200,19 @@ This project has been customized with a custom avatar logo and speech bubble. He
 #### 1. **Replace Logo Files**
 
 Replace the logo files in the `public/` directory:
+
 - `public/lk-logo.svg` - Light mode avatar logo
 - `public/lk-logo-dark.svg` - Dark mode avatar logo (optional, can be same as light)
 
 **Logo Requirements**:
+
 - Format: SVG (for scalability and quality)
 - Can embed PNG/images within SVG using base64 or references
 - Viewbox: Any size (automatically scaled)
 - File size: Keep under 2MB for optimal loading
 
 **Creating the SVG**:
+
 ```svg
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39.45 37.73">
   <!-- Your avatar image embedded as base64 or SVG paths -->
@@ -223,11 +226,13 @@ Replace the logo files in the `public/` directory:
 The popup trigger has been customized in [`components/embed-popup/trigger.tsx`](components/embed-popup/trigger.tsx):
 
 **Logo Display**:
+
 - **Scale**: `transform: scale(3.6)` - Avatar appears 3.6x larger than original size
 - **No circular border**: Removed the teal circular background for clean avatar display
 - **Position**: Fixed at `right-16 bottom-8` (64px from right, 32px from bottom)
 
 **Speech Bubble**:
+
 - **Text**: "Posso aiutarti?" (Italian for "Can I help you?")
 - **Position**: Above and slightly left of avatar (`-right-6 bottom-full`)
 - **Styling**: White rounded bubble with shadow and small triangular tail
@@ -237,6 +242,7 @@ The popup trigger has been customized in [`components/embed-popup/trigger.tsx`](
 #### 3. **Code Changes**
 
 **File: `components/embed-popup/trigger.tsx`**
+
 ```typescript
 // Logo path logic - works for both embedded and direct access
 const logoSrc = baseUrl
@@ -267,11 +273,10 @@ className="relative z-20 grid size-16 place-items-center transition-colors"
 ```
 
 **File: `components/embed-popup/error-message.tsx`**
+
 ```typescript
 // Logo paths for error states
-const logoSrc = baseUrl
-  ? `https://${baseUrl}.vercel.app/lk-logo.svg`
-  : '/lk-logo.svg';
+const logoSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
 const logoDarkSrc = baseUrl
   ? `https://${baseUrl}.vercel.app/lk-logo-dark.svg`
   : '/lk-logo-dark.svg';
@@ -289,6 +294,7 @@ When embedding the widget on external websites (e.g., fastfood.sevitech.org):
 ```
 
 **Important**:
+
 - `data-lk-sandbox-id` should contain **ONLY the subdomain** (e.g., `sevi-avatar-avatarlogo`)
 - Do NOT include `https://` or `.vercel.app`
 - This ensures logos load from your Vercel deployment, not the embedding site
@@ -296,6 +302,7 @@ When embedding the widget on external websites (e.g., fastfood.sevitech.org):
 #### 5. **Customization Options**
 
 **To change the speech bubble text**:
+
 ```typescript
 // In components/embed-popup/trigger.tsx, line 68
 <p className="text-sm font-medium whitespace-nowrap text-gray-800 dark:text-white">
@@ -304,21 +311,24 @@ When embedding the widget on external websites (e.g., fastfood.sevitech.org):
 ```
 
 **To adjust logo size**:
+
 ```typescript
 // In components/embed-popup/trigger.tsx, line 98
 style={{ transform: 'scale(3.6)' }} // Change 3.6 to your preferred scale
 ```
 
 **To change popup position**:
+
 ```typescript
 // In components/embed-popup/trigger.tsx, line 54
-className="fixed right-16 bottom-8 z-50" // Adjust right-16 and bottom-8
+className = 'fixed right-16 bottom-8 z-50'; // Adjust right-16 and bottom-8
 ```
 
 **To adjust speech bubble position**:
+
 ```typescript
 // In components/embed-popup/trigger.tsx, line 64
-className="absolute -right-6 bottom-full z-0 mb-4" // Adjust -right-6 and mb-4
+className = 'absolute -right-6 bottom-full z-0 mb-4'; // Adjust -right-6 and mb-4
 ```
 
 #### 6. **Deployment**
@@ -347,16 +357,19 @@ After making logo changes:
 #### 8. **Troubleshooting**
 
 **Logo not showing on embedded sites**:
+
 - Verify `data-lk-sandbox-id` contains only subdomain (no `https://`)
 - Check browser console for 404 errors
 - Ensure SVG files exist in `public/` folder
 - Clear browser cache and hard refresh
 
 **Logo appears too small/large**:
+
 - Adjust `scale()` value in trigger.tsx line 98
 - Typical range: 2.0 to 4.0
 
 **Speech bubble overlaps logo**:
+
 - Increase negative right value (e.g., `-right-6` to `-right-8`)
 - Speech bubble is z-0, logo is z-20, so logo should always be on top
 
