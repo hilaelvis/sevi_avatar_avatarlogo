@@ -9,7 +9,9 @@ interface ErrorMessageProps {
 export function ErrorMessage({ error, baseUrl }: ErrorMessageProps) {
   // Use baseUrl for embedded widgets, relative path for direct access
   const logoSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo.svg` : '/lk-logo.svg';
-  const logoDarkSrc = baseUrl ? `https://${baseUrl}.vercel.app/lk-logo-dark.svg` : '/lk-logo-dark.svg';
+  const logoDarkSrc = baseUrl
+    ? `https://${baseUrl}.vercel.app/lk-logo-dark.svg`
+    : '/lk-logo-dark.svg';
   return (
     <div
       inert={error === null}
