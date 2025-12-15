@@ -936,12 +936,14 @@ This section documents the visual and behavioral customizations made to the defa
 ### Logo and Branding
 
 **Custom Phone Icon Logo**:
+
 - Replaced default LiveKit logo with custom teal phone icon
 - Logo files: `public/lk-logo.svg` and `public/lk-logo-dark.svg`
 - Icon design: Phone handset without built-in circular background
 - Circular frame provided by CSS border (not embedded in SVG)
 
 **Logo Styling** ([`components/embed-popup/trigger.tsx`](./components/embed-popup/trigger.tsx)):
+
 ```typescript
 // Popup button configuration
 size-16 (64px container)
@@ -951,6 +953,7 @@ Border color: rgb(0,191,165) - custom teal color
 ```
 
 **Key Decisions**:
+
 - SVG contains only the icon artwork (no background circle)
 - CSS provides the circular frame via `border-radius: 9999px`
 - Logo scales beyond container for prominent visibility
@@ -962,19 +965,21 @@ Border color: rgb(0,191,165) - custom teal color
 
 ```css
 /* Light mode (line 21) */
---fgAccent: #00bfa5;  /* rgb(0, 191, 165) - Custom teal */
+--fgAccent: #00bfa5; /* rgb(0, 191, 165) - Custom teal */
 
 /* Dark mode (line 84) */
---fgAccent: #00bfa5;  /* rgb(0, 191, 165) - Matches light mode */
+--fgAccent: #00bfa5; /* rgb(0, 191, 165) - Matches light mode */
 ```
 
 **Color Application**:
+
 - Popup button background when closed: `bg-[rgb(0,191,165)]`
 - Button border: `border-[rgb(0,191,165)]`
 - Connecting state border: `border-[rgb(0,191,165)]/30` (30% opacity)
 - Consistent across light and dark themes
 
 **Why Custom Color**:
+
 - Original template used blue (`#002cf2` light, `#1fd5f9` dark)
 - Teal provides restaurant-friendly, approachable feel
 - Better brand alignment for hospitality industry
@@ -989,18 +994,21 @@ const [chatOpen, setChatOpen] = React.useState(false);
 ```
 
 **Current Behavior**:
+
 - Popup opens in **avatar mode** by default (chat panel closed)
 - Clean, focused interface showing only the voice avatar
 - Users can click the chat button to view conversation transcript
 - Provides a streamlined mobile-first experience
 
 **Benefits**:
+
 - Cleaner, less cluttered interface on mobile devices
 - Focus on voice interaction (primary use case)
 - Chat transcript available on-demand via toggle button
 - Reduced cognitive load for users
 
 **User Can Still**:
+
 - Click chat button to view conversation transcript
 - Type messages in chat input field
 - Toggle visibility at any time
@@ -1008,12 +1016,14 @@ const [chatOpen, setChatOpen] = React.useState(false);
 ### Size and Scaling
 
 **Popup Button Dimensions**:
+
 - Container: `size-16` = 64px × 64px
 - Border: 3px solid teal
 - Logo: 64px base × 1.6 scale = 102.4px effective size
 - Logo intentionally overflows container for visibility
 
 **Size Optimization Process**:
+
 1. Started too small (invisible logo)
 2. Scaled up to 2.0 (too large)
 3. Reduced by 30% to 1.4 scale
@@ -1021,6 +1031,7 @@ const [chatOpen, setChatOpen] = React.useState(false);
 5. Reduced container from size-24 to size-16 to tighten border
 
 **Cache Busting**:
+
 ```typescript
 src={`${logoSrc}?v=17`}  // Version query param forces browser refresh
 ```
@@ -1030,16 +1041,19 @@ src={`${logoSrc}?v=17`}  // Version query param forces browser refresh
 **Removed Dual-Ring Animation**:
 
 Original template had:
+
 - Outer animated ring with conic gradient
 - Inner icon container
 - Complex state-based animations
 
 Simplified to:
+
 - Single container with border
 - Direct background color changes
 - Cleaner, more performant code
 
 **Before** (original):
+
 ```typescript
 <div className="p-0.5">
   <motion.div className="outer ring with gradient animation" />
@@ -1048,6 +1062,7 @@ Simplified to:
 ```
 
 **After** (simplified):
+
 ```typescript
 <div className="size-16 border-[3px] bg-[rgb(0,191,165)]">
   <img src={logoSrc} className="h-16 w-16" style={{ transform: 'scale(1.6)' }} />
@@ -1057,12 +1072,14 @@ Simplified to:
 ### Mobile Optimizations
 
 **Logo Display Method**:
+
 - Using `<img>` tag instead of CSS `mask-image`
 - Preserves SVG colors natively (no color manipulation needed)
 - Better browser compatibility across mobile devices
 - Simpler implementation
 
 **Responsive Design**:
+
 - Fixed position: `fixed right-4 bottom-4`
 - Z-index: `z-50` ensures button stays on top
 - Scale animation on hover: `hover:scale-105`
@@ -1071,17 +1088,20 @@ Simplified to:
 ### Visual Polish
 
 **Drop Shadow**:
+
 ```typescript
-className="drop-shadow-md"  // Subtle depth effect
+className = 'drop-shadow-md'; // Subtle depth effect
 ```
 
 **Smooth Transitions**:
+
 ```typescript
 transition-colors  // Color changes fade smoothly
 transition-[scale] duration-300  // Hover scale animates in 300ms
 ```
 
 **State-Based Colors**:
+
 - Closed: Teal background with teal border
 - Connecting: Light gray background with semi-transparent teal border
 - Connected: Red background with white border (disconnect state)

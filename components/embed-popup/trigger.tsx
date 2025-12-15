@@ -16,9 +16,10 @@ interface TriggerProps {
 
 export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerProps) {
   // Use relative path for local development, full URL for production
-  const logoSrc = baseUrl && !baseUrl.includes('localhost')
-    ? `https://${baseUrl}.vercel.app/lk-logo.svg`
-    : '/lk-logo.svg';
+  const logoSrc =
+    baseUrl && !baseUrl.includes('localhost')
+      ? `https://${baseUrl}.vercel.app/lk-logo.svg`
+      : '/lk-logo.svg';
   const { state: agentState } = useVoiceAssistant();
 
   const isAgentConnecting =
@@ -61,14 +62,14 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ delay: 0.5 }}
-            className="absolute bottom-full -right-6 mb-4 z-0"
+            className="absolute -right-6 bottom-full z-0 mb-4"
           >
-            <div className="relative bg-white dark:bg-gray-800 rounded-2xl px-4 py-2 shadow-lg border border-gray-200 dark:border-gray-700">
-              <p className="text-sm font-medium text-gray-800 dark:text-white whitespace-nowrap">
+            <div className="relative rounded-2xl border border-gray-200 bg-white px-4 py-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+              <p className="text-sm font-medium whitespace-nowrap text-gray-800 dark:text-white">
                 Posso aiutarti?
               </p>
               {/* Speech bubble tail */}
-              <div className="absolute -bottom-2 right-4 w-4 h-4 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700 transform rotate-45"></div>
+              <div className="absolute right-4 -bottom-2 h-4 w-4 rotate-45 transform border-r border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"></div>
             </div>
           </motion.div>
         )}
