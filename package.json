@@ -1,7 +1,8 @@
 {
-  "name": "agent-starter-embed",
-  "version": "0.1.0",
+  "name": "avatar-prototype-1",
+  "version": "1.0.0",
   "private": true,
+  "description": "LiveKit avatar popup widget with custom avatar, speech bubble, and connecting message",
   "scripts": {
     "dev": "next dev --turbopack",
     "build-embed-popup-script": "webpack",

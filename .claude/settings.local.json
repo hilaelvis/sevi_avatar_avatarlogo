@@ -23,7 +23,8 @@
       "Bash(pnpm format:*)",
       "Bash(npm audit:*)",
       "Bash(pnpm audit:*)",
-      "Bash(pnpm update:*)"
+      "Bash(pnpm update:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
