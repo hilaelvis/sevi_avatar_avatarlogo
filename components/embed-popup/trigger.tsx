@@ -35,6 +35,7 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
       <AnimatedButton
         key="trigger-button"
         size="lg"
+        variant="ghost"
         initial={{
           scale: 0,
         }}
