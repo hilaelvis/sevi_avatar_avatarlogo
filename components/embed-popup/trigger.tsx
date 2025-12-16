@@ -77,7 +77,6 @@ export function Trigger({ error = null, popupOpen, onToggle, baseUrl }: TriggerP
         <div
           className={cn(
             'relative z-20 grid size-16 place-items-center rounded-full transition-colors',
-            !error && isAgentConnecting && 'bg-bg1',
             (isAgentConnected || (error && popupOpen)) && 'bg-destructive'
           )}
         >
